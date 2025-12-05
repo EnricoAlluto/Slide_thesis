@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet of Things e Ambienti Immersivi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        h3 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p, li {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-left: 30px;
+        }
+
+        .circles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .circle-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: 0 auto;
+        }
+
+        .circle-item:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .circle-item h4 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #667eea;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px auto;
+            border: 3px dashed #667eea;
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .close-modal:hover {
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">5</span>
+        </div>
+
+        <!-- SLIDE 1: Title -->
+        <div class="slide active">
+            <div class="slide-content">
+                <h1>Internet of Things e Ambienti Immersivi</h1>
+                <div class="image-placeholder">
+                    [Inserisci qui la tua immagine principale]
+                </div>
+                <p style="text-align: center; font-size: 1.5em; color: #667eea; margin-top: 30px;">
+                    Presentazione Interattiva
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Table of Contents -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>TABLE OF CONTENTS</h2>
+                <div class="circles-container">
+                    <div class="circle-item" onclick="openModal('modal1')">
+                        <h4>Interaction Architecture</h4>
+                    </div>
+                    <div class="circle-item" onclick="openModal('modal2')">
+                        <h4>IoT Technologies</h4>
+                    </div>
+                    <div class="circle-item" onclick="openModal('modal3')">
+                        <h4>Ambienti Immersivi</h4>
+                    </div>
+                    <div class="circle-item" onclick="openModal('modal4')">
+                        <h4>Applicazioni</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Interaction Architecture -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Interaction Architecture</h2>
+                <div class="image-placeholder">
+                    [Inserisci immagine Interaction Architecture]
+                </div>
+                <ul>
+                    <li>Architettura basata su sensori e attuatori</li>
+                    <li>Comunicazione bidirezionale</li>
+                    <li>Elaborazione dati in tempo reale</li>
+                    <li>Interfacce intuitive e responsive</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Application Demo -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Demo dell'Applicazione</h2>
+                <div class="video-container">
+                    <div class="image-placeholder" style="height: 450px;">
+                        [Inserisci qui il tuo video dell'applicazione]<br>
+                        <small style="font-size: 0.8em; margin-top: 15px; display: block;">
+                            Usa tag &lt;video&gt; o &lt;iframe&gt; per YouTube
+                        </small>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px;">
+                    <strong>Esempio di integrazione video:</strong><br>
+                    Sostituisci il placeholder con il tuo contenuto multimediale
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Grazie -->
+        <div class="slide">
+            <div class="slide-content">
+                <h1>Grazie per l'attenzione!</h1>
+                <div class="image-placeholder">
+                    [Inserisci immagine finale]
+                </div>
+                <p style="text-align: center; font-size: 1.3em; margin-top: 30px;">
+                    Domande?
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS per approfondimenti -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal1')">&times;</span>
+            <h2>Interaction Architecture - Approfondimento</h2>
+            <p>L'architettura di interazione nell'IoT comprende diversi livelli:</p>
+            <ul>
+                <li><strong>Layer Fisico:</strong> Sensori, attuatori, dispositivi edge</li>
+                <li><strong>Layer di Rete:</strong> Protocolli di comunicazione (MQTT, CoAP, HTTP)</li>
+                <li><strong>Layer Applicativo:</strong> Logica di business e processing</li>
+                <li><strong>Layer di Presentazione:</strong> Interfacce utente e dashboard</li>
+            </ul>
+            <div class="image-placeholder" style="height: 300px; margin-top: 20px;">
+                [Inserisci diagramma architettura]
+            </div>
+        </div>
+    </div>
+
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal2')">&times;</span>
+            <h2>IoT Technologies</h2>
+            <h3>Tecnologie Chiave:</h3>
+            <ul>
+                <li><strong>Connettività:</strong> WiFi, Bluetooth, LoRa, 5G, NB-IoT</li>
+                <li><strong>Protocolli:</strong> MQTT, CoAP, AMQP, WebSocket</li>
+                <li><strong>Cloud Platforms:</strong> AWS IoT, Azure IoT, Google Cloud IoT</li>
+                <li><strong>Edge Computing:</strong> Elaborazione locale per ridurre latenza</li>
+                <li><strong>Security:</strong> Crittografia, autenticazione, blockchain</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="modal3" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal3')">&times;</span>
+            <h2>Ambienti Immersivi</h2>
+            <p>Gli ambienti immersivi integrano IoT con tecnologie di realtà estesa:</p>
+            <ul>
+                <li><strong>VR (Virtual Reality):</strong> Ambienti completamente virtuali</li>
+                <li><strong>AR (Augmented Reality):</strong> Sovrapposizione digitale al mondo reale</li>
+                <li><strong>MR (Mixed Reality):</strong> Interazione tra oggetti fisici e digitali</li>
+                <li><strong>Digital Twins:</strong> Repliche digitali di sistemi fisici</li>
+            </ul>
+            <div class="image-placeholder" style="height: 250px; margin-top: 20px;">
+                [Inserisci immagine ambienti immersivi]
+            </div>
+        </div>
+    </div>
+
+    <div id="modal4" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal4')">&times;</span>
+            <h2>Applicazioni IoT e Ambienti Immersivi</h2>
+            <h3>Settori di Applicazione:</h3>
+            <ul>
+                <li><strong>Smart Home:</strong> Automazione domestica intelligente</li>
+                <li><strong>Industry 4.0:</strong> Fabbriche intelligenti e manutenzione predittiva</li>
+                <li><strong>Smart Cities:</strong> Gestione urbana ottimizzata</li>
+                <li><strong>Healthcare:</strong> Monitoraggio pazienti e telemedicina</li>
+                <li><strong>Retail:</strong> Esperienze di shopping immersive</li>
+                <li><strong>Education:</strong> Apprendimento interattivo e laboratori virtuali</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Precedente</button>
+        <button class="nav-btn" onclick="nextSlide()">Successiva →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
